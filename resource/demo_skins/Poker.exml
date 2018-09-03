@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="PokerSkin" width="60" height="80" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+	<w:Config id="16575ac8d75" ></w:Config>
+	<e:Rect id="poker_bg" left="0" right="0" top="0" bottom="0" ellipseWidth="30" ellipseHeight="30" fillColor="0xffffff" strokeColor="0x000000" strokeAlpha="0.7"/>
+	<e:Label id="poker_value" text="A" verticalCenter="0" horizontalCenter="0.5" textColor="0x000000" fontFamily="Arial" verticalAlign="middle" textAlign="center"/>
+</e:Skin>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="DiscardBlockSkin" width="900" height="80" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+	<w:Config id="16574220cee" ></w:Config>
+	<e:Rect top="0" bottom="0" left="0" right="0" fillColor="0xffbf00" anchorOffsetY="0"/>
+	<e:Group id="pokers" top="0" bottom="0" left="0" right="0" anchorOffsetX="0" anchorOffsetY="0"/>
+</e:Skin>
