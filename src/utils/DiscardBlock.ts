@@ -189,10 +189,24 @@ class DiscardBlock extends eui.Component implements  eui.UIComponent {
 		this.operation_pokers = []
 	}
 
-
-
-
-
 	
+
+	discard(){
+
+		//获取所有选中的牌
+		let selected_pokers = []
+		for (let i = 0;i<this.pokers.numChildren;i++){
+			let poker = <Poker>this.pokers.getChildAt(i);
+			if (poker.is_pop_up){
+				selected_pokers.push(poker);
+			}
+			
+		}
+		for (let poker of selected_pokers){
+			this.pokers.removeChild(poker);
+		}
+
+		this.adjust_all_cards()
+	}
 	
 }

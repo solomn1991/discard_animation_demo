@@ -154,6 +154,21 @@ var DiscardBlock = (function (_super) {
         }
         this.operation_pokers = [];
     };
+    DiscardBlock.prototype.discard = function () {
+        //获取所有选中的牌
+        var selected_pokers = [];
+        for (var i = 0; i < this.pokers.numChildren; i++) {
+            var poker = this.pokers.getChildAt(i);
+            if (poker.is_pop_up) {
+                selected_pokers.push(poker);
+            }
+        }
+        for (var _i = 0, selected_pokers_1 = selected_pokers; _i < selected_pokers_1.length; _i++) {
+            var poker = selected_pokers_1[_i];
+            this.pokers.removeChild(poker);
+        }
+        this.adjust_all_cards();
+    };
     return DiscardBlock;
 }(eui.Component));
 __reflect(DiscardBlock.prototype, "DiscardBlock", ["eui.UIComponent", "egret.DisplayObject"]);

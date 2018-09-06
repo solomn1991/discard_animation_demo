@@ -174,8 +174,14 @@ var Main = (function (_super) {
         button1.label = "加入几张牌";
         this.addChild(button1);
         button1.addEventListener(egret.TouchEvent.TOUCH_TAP, this.discardblock.add_pokers.bind(this.discardblock, [2, 3]), this);
+        button1.x = 0;
+        button1.y = 0;
         var button2 = new eui.Button();
         button2.label = "出牌";
+        button2.addEventListener(egret.TouchEvent.TOUCH_TAP, this.discardblock.discard, this.discardblock);
+        this.addChild(button2);
+        button2.x = 0;
+        button2.y = 50;
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
