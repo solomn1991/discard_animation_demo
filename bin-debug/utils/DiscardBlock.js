@@ -13,6 +13,7 @@ var DiscardBlock = (function (_super) {
     function DiscardBlock() {
         var _this = _super.call(this) || this;
         _this.poker_controllers = {};
+        _this.operation_pokers = [];
         _this.min_space = 30;
         _this.max_space = 40;
         _this.verticalCenter = 1;
@@ -20,13 +21,13 @@ var DiscardBlock = (function (_super) {
         _this.tbm = new TweenBatchManager();
         _this.init_poker_values = [
             "1", "2",
-            "3", "4", "5", "6", "7", "8",
-            "1", "2", "3", "4", "5", "6", "7", "8",
-            "1", "2", "3", "4", "5", "6", "7", "8",
-            "1", "2", "3", "4", "5", "6", "7", "8",
-            "1", "2", "3", "4", "5", "6", "7", "8",
-            "1", "2", "3", "4", "5", "6", "7", "8",
+            "3", "4", "5",
         ];
+        //滑动触发顺序begin,move,end,tap
+        //点击触发顺序begin,end,tap
+        _this.addEventListener(egret.TouchEvent.TOUCH_MOVE, _this.add_operation_pokers, _this);
+        _this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, _this.add_operation_pokers, _this);
+        _this.addEventListener(egret.TouchEvent.TOUCH_END, _this.toggle_operation_pokers, _this);
         return _this;
     }
     DiscardBlock.prototype.partAdded = function (partName, instance) {
@@ -61,7 +62,6 @@ var DiscardBlock = (function (_super) {
         var space;
         if (this.pokers.numChildren != 0) {
             space = inner_space / (this.pokers.numChildren - 1);
-            console.log("space", space);
             if (space > this.max_space) {
                 space = this.max_space;
             }
@@ -77,7 +77,7 @@ var DiscardBlock = (function (_super) {
         for (var i = 0; i < this.pokers.numChildren; i++) {
             var des_x = start_x + i * space;
             var poker = this.pokers.getChildAt(i);
-            var tw = poker.tween.to({ x: des_x }, 400).setPaused(false);
+            var tw = poker.tween.to({ x: des_x, y: this.height / 2 }, 400).setPaused(false);
             this.tbm.add_tween(tw);
         }
         (_a = this.tbm).BatchPlay.apply(_a, [callback, callbackThisObj].concat(callbackArgs));
@@ -95,23 +95,64 @@ var DiscardBlock = (function (_super) {
         poker.y = last_poker_position.y;
         // 添加牌的位置到最后一张牌上
         this.pokers.addChild(poker); //不知道能不能回调
-        // console.log(poker_value);
         // 调整所有牌的位置
         this.adjust_all_cards(this.init_pokers, this);
     };
-    DiscardBlock.prototype.add_poker = function (poker_values) {
+    DiscardBlock.prototype.add_pokers = function () {
+        var args = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
+        var poker_values = args[0];
         // 创建对象
         var pokers = [];
-        for (var _i = 0, poker_values_1 = poker_values; _i < poker_values_1.length; _i++) {
-            var poker_value = poker_values_1[_i];
-            pokers.push({
-                poker_ui: new Poker(poker_value, this.height),
-                position: 0
-            });
+        // 设置牌到待调整牌的位置
+        var y = this.height / 2 - this.height - 10;
+        var space = 30; //待处理牌之间的间隔
+        var start_x = this.width / 2 - (space * (pokers.length - 1));
+        for (var i = 0; i < poker_values.length; i++) {
+            var tmp_poker_value = poker_values[i];
+            var tmp_poker = new Poker(tmp_poker_value, this.height);
+            tmp_poker.y = y;
+            tmp_poker.x = start_x + i * space;
+            pokers.push(tmp_poker);
         }
-        // 找到对象应该插入的位置
-        // 插入对象
+        // 找到对象应该插入的位置,插入对象,先都放到最后层
+        for (var _i = 0, pokers_1 = pokers; _i < pokers_1.length; _i++) {
+            var poker = pokers_1[_i];
+            var position = this.get_new_poker_position(poker);
+            this.pokers.addChild(poker);
+        }
         // 调整对象,
+        egret.setTimeout(this.readjust_all_cards.bind(this, pokers), this, 800);
+    };
+    DiscardBlock.prototype.get_new_poker_position = function (poker) {
+        return 0;
+    };
+    DiscardBlock.prototype.readjust_all_cards = function (pokers) {
+        for (var _i = 0, pokers_2 = pokers; _i < pokers_2.length; _i++) {
+            var poker = pokers_2[_i];
+            var postion = this.get_new_poker_position(poker);
+            this.pokers.setChildIndex(poker, postion);
+        }
+        this.adjust_all_cards();
+    };
+    DiscardBlock.prototype.add_operation_pokers = function (evt) {
+        var poker = evt.target.parent;
+        if (poker instanceof Poker) {
+            this.add_to_operation_pokers(poker);
+        }
+    };
+    DiscardBlock.prototype.add_to_operation_pokers = function (poker) {
+        if (this.operation_pokers.indexOf(poker) == -1) {
+            this.operation_pokers.push(poker);
+            poker.darken();
+        }
+    };
+    DiscardBlock.prototype.toggle_operation_pokers = function () {
+        for (var i = 0; i < this.operation_pokers.length; i++) {
+            var poker = this.operation_pokers[i];
+            poker.toggle();
+            poker.shallower();
+        }
+        this.operation_pokers = [];
     };
     return DiscardBlock;
 }(eui.Component));

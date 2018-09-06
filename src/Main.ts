@@ -29,6 +29,8 @@
 
 class Main extends eui.UILayer {
 
+    private discardblock:DiscardBlock
+
 
     protected createChildren(): void {
         super.createChildren();
@@ -106,12 +108,18 @@ class Main extends eui.UILayer {
         outline.graphics.endFill()
         this.addChild(outline)
 
-        this.addChild(new DiscardBlock());
-        // var tmp = new eui.Rect(100,100,30000)
-        // this.addChild(tmp)
-        // var tw = egret.Tween.get(tmp);
-        // tw.to({x:300},3000).call(()=>{console.log(tmp.x)});
-        // tw.to({x:1000},2000).call(()=>{console.log(tmp.x)});
+        
+        this.discardblock =  new DiscardBlock()
+        this.addChild(this.discardblock);
+
+        let button1 = new eui.Button();
+        button1.label = "加入几张牌"
+        this.addChild(button1);
+        button1.addEventListener(egret.TouchEvent.TOUCH_TAP,this.discardblock.add_pokers.bind(this.discardblock,[2,3]),this,);
+
+        let button2 = new eui.Button();
+        button2.label = "出牌"
+
 
 
     }
@@ -166,4 +174,7 @@ class Main extends eui.UILayer {
         panel.verticalCenter = 0;
         this.addChild(panel);
     }
+
+
 }
+

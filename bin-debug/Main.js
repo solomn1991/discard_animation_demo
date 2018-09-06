@@ -168,12 +168,14 @@ var Main = (function (_super) {
         outline.graphics.drawRect(0, 0, this.width, this.height);
         outline.graphics.endFill();
         this.addChild(outline);
-        this.addChild(new DiscardBlock());
-        // var tmp = new eui.Rect(100,100,30000)
-        // this.addChild(tmp)
-        // var tw = egret.Tween.get(tmp);
-        // tw.to({x:300},3000).call(()=>{console.log(tmp.x)});
-        // tw.to({x:1000},2000).call(()=>{console.log(tmp.x)});
+        this.discardblock = new DiscardBlock();
+        this.addChild(this.discardblock);
+        var button1 = new eui.Button();
+        button1.label = "加入几张牌";
+        this.addChild(button1);
+        button1.addEventListener(egret.TouchEvent.TOUCH_TAP, this.discardblock.add_pokers.bind(this.discardblock, [2, 3]), this);
+        var button2 = new eui.Button();
+        button2.label = "出牌";
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
