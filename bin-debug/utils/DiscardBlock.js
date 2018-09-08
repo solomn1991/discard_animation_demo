@@ -23,6 +23,9 @@ var DiscardBlock = (function (_super) {
         _this.init_poker_values = [
             "1", "2",
             "3", "4", "5",
+            "6", "7", "8",
+            "1", "2", "3", "4", "5", "6", "7", "8",
+            "1", "2", "3", "4", "5", "6", "7", "8",
         ];
         //滑动触发顺序begin,move,end,tap
         //点击触发顺序begin,end,tap
@@ -142,6 +145,7 @@ var DiscardBlock = (function (_super) {
             this.last_valid_touch_point = point;
         }
         var distance = new Distance(point, this.last_valid_touch_point);
+        console.log("distance", distance.smaller_x, distance.bigger_x);
         var poker_show_left_x; //牌露出来部分的矩形左边的x
         var poker_show_right_x; //牌露出来部分的矩形右边的x
         for (var i = 0; i < this.pokers.numChildren; i++) {
