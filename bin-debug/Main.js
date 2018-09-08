@@ -82,10 +82,10 @@ var Main = (function (_super) {
             // custom lifecycle plugin
         });
         egret.lifecycle.onPause = function () {
-            egret.ticker.pause();
+            // egret.ticker.pause();
         };
         egret.lifecycle.onResume = function () {
-            egret.ticker.resume();
+            // egret.ticker.resume();
         };
         //inject the custom material parser
         //注入自定义的素材解析器
@@ -163,7 +163,7 @@ var Main = (function (_super) {
      * Create scene interface
      */
     Main.prototype.createGameScene = function () {
-        var outline = new egret.Shape;
+        var outline = new egret.Shape();
         outline.graphics.lineStyle(10, 0x00ff00);
         outline.graphics.drawRect(0, 0, this.width, this.height);
         outline.graphics.endFill();
@@ -182,6 +182,12 @@ var Main = (function (_super) {
         this.addChild(button2);
         button2.x = 0;
         button2.y = 50;
+        var button3 = new eui.Button();
+        button3.label = "收牌";
+        button3.addEventListener(egret.TouchEvent.TOUCH_TAP, this.discardblock.reset_all_pokers, this.discardblock);
+        this.addChild(button3);
+        button3.x = 0;
+        button3.y = 100;
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。

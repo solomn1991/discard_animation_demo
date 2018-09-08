@@ -40,11 +40,11 @@ class Main extends eui.UILayer {
         })
 
         egret.lifecycle.onPause = () => {
-            egret.ticker.pause();
+            // egret.ticker.pause();
         }
 
         egret.lifecycle.onResume = () => {
-            egret.ticker.resume();
+            // egret.ticker.resume();
         }
 
         //inject the custom material parser
@@ -102,11 +102,13 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected createGameScene(): void {
-        var outline:egret.Shape = new egret.Shape;
+        var outline:egret.Shape = new egret.Shape();
         outline.graphics.lineStyle(10,0x00ff00);
         outline.graphics.drawRect(0,0,this.width,this.height);
         outline.graphics.endFill()
         this.addChild(outline)
+
+
 
         
         this.discardblock =  new DiscardBlock()
@@ -126,6 +128,12 @@ class Main extends eui.UILayer {
         button2.x = 0;
         button2.y = 50
 
+        let button3 = new eui.Button();
+        button3.label = "收牌"
+        button3.addEventListener(egret.TouchEvent.TOUCH_TAP,this.discardblock.reset_all_pokers,this.discardblock);
+        this.addChild(button3)
+        button3.x = 0;
+        button3.y = 100
 
 
     }

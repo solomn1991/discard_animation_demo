@@ -14,6 +14,7 @@ var DiscardBlock = (function (_super) {
         var _this = _super.call(this) || this;
         _this.poker_controllers = {};
         _this.operation_pokers = [];
+        _this.last_valid_touch_point = null;
         _this.min_space = 30;
         _this.max_space = 40;
         _this.verticalCenter = 1;
@@ -28,6 +29,7 @@ var DiscardBlock = (function (_super) {
         _this.addEventListener(egret.TouchEvent.TOUCH_MOVE, _this.add_operation_pokers, _this);
         _this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, _this.add_operation_pokers, _this);
         _this.addEventListener(egret.TouchEvent.TOUCH_END, _this.toggle_operation_pokers, _this);
+        _this.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, _this.toggle_operation_pokers, _this);
         return _this;
     }
     DiscardBlock.prototype.partAdded = function (partName, instance) {
@@ -135,10 +137,30 @@ var DiscardBlock = (function (_super) {
         this.adjust_all_cards();
     };
     DiscardBlock.prototype.add_operation_pokers = function (evt) {
-        var poker = evt.target.parent;
-        if (poker instanceof Poker) {
-            this.add_to_operation_pokers(poker);
+        var point = this.globalToLocal(evt.stageX, evt.stageY);
+        if (this.last_valid_touch_point == null) {
+            this.last_valid_touch_point = point;
         }
+        var distance = new Distance(point, this.last_valid_touch_point);
+        var poker_show_left_x; //牌露出来部分的矩形左边的x
+        var poker_show_right_x; //牌露出来部分的矩形右边的x
+        for (var i = 0; i < this.pokers.numChildren; i++) {
+            var poker = this.pokers.getChildAt(i);
+            if (i + 1 < this.pokers.numChildren) {
+                var next_poker = this.pokers.getChildAt(i + 1);
+                poker_show_left_x = poker.x + poker.getBounds().left;
+                poker_show_right_x = next_poker.x + next_poker.getBounds().left;
+            }
+            else {
+                poker_show_left_x = poker.x + poker.getBounds().left;
+                poker_show_right_x = poker.x + poker.getBounds().right;
+            }
+            if (!(distance.bigger_x < poker_show_left_x ||
+                distance.smaller_x > poker_show_right_x)) {
+                this.add_to_operation_pokers(poker);
+            }
+        }
+        this.last_valid_touch_point = point;
     };
     DiscardBlock.prototype.add_to_operation_pokers = function (poker) {
         if (this.operation_pokers.indexOf(poker) == -1) {
@@ -146,12 +168,13 @@ var DiscardBlock = (function (_super) {
             poker.darken();
         }
     };
-    DiscardBlock.prototype.toggle_operation_pokers = function () {
+    DiscardBlock.prototype.toggle_operation_pokers = function (evt) {
         for (var i = 0; i < this.operation_pokers.length; i++) {
             var poker = this.operation_pokers[i];
             poker.toggle();
             poker.shallower();
         }
+        this.last_valid_touch_point = null;
         this.operation_pokers = [];
     };
     DiscardBlock.prototype.discard = function () {
@@ -168,6 +191,15 @@ var DiscardBlock = (function (_super) {
             this.pokers.removeChild(poker);
         }
         this.adjust_all_cards();
+    };
+    DiscardBlock.prototype.reset_all_pokers = function () {
+        for (var i = 0; i < this.pokers.numChildren; i++) {
+            var poker = this.pokers.getChildAt(i);
+            poker.reset();
+        }
+    };
+    DiscardBlock.prototype.test = function (evt) {
+        console.log("outside", evt.localX, evt.localY, this.globalToLocal(evt.stageX, evt.stageY), "\n----\n");
     };
     return DiscardBlock;
 }(eui.Component));

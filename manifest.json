@@ -15,6 +15,7 @@
 		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/utils/DiscardBlock.js",
+		"bin-debug/utils/Distance.js",
 		"bin-debug/utils/Poker.js",
 		"bin-debug/utils/TweenBatchManager.js"
 	]

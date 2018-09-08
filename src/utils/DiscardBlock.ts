@@ -8,6 +8,8 @@ class DiscardBlock extends eui.Component implements  eui.UIComponent {
 	private init_poker_values
 	private operation_pokers = []
 
+	private last_valid_touch_point=null
+
 
 	private min_space:number = 30;
 	private max_space:number = 40;
@@ -37,8 +39,7 @@ class DiscardBlock extends eui.Component implements  eui.UIComponent {
 		this.addEventListener(egret.TouchEvent.TOUCH_MOVE,this.add_operation_pokers,this);
 		this.addEventListener(egret.TouchEvent.TOUCH_BEGIN,this.add_operation_pokers,this)
 		this.addEventListener(egret.TouchEvent.TOUCH_END,this.toggle_operation_pokers,this)
-
-		
+		this.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE,this.toggle_operation_pokers,this)
 		
 	}
 
@@ -164,10 +165,34 @@ class DiscardBlock extends eui.Component implements  eui.UIComponent {
 
 	
 	add_operation_pokers(evt:egret.TouchEvent){
-		let poker = <Poker>evt.target.parent;
-		if (poker instanceof Poker){
-			this.add_to_operation_pokers(poker);
+		let point = this.globalToLocal(evt.stageX,evt.stageY)
+
+		if (this.last_valid_touch_point==null){
+			this.last_valid_touch_point = point
 		}
+
+		let distance = new Distance(point,this.last_valid_touch_point);
+		let poker_show_left_x;//牌露出来部分的矩形左边的x
+		let poker_show_right_x;//牌露出来部分的矩形右边的x
+		for (let i = 0;i<this.pokers.numChildren;i++){
+			let poker = <Poker>this.pokers.getChildAt(i);
+			if (i+1<this.pokers.numChildren){
+				let next_poker = this.pokers.getChildAt(i+1);
+				poker_show_left_x = poker.x + poker.getBounds().left;
+				poker_show_right_x = next_poker.x + next_poker.getBounds().left;
+
+			}else{
+				poker_show_left_x = poker.x+ poker.getBounds().left;
+				poker_show_right_x = poker.x+ poker.getBounds().right;
+			}
+			if (!(distance.bigger_x<poker_show_left_x||
+			distance.smaller_x>poker_show_right_x)){
+				this.add_to_operation_pokers(poker);
+			}
+		}
+
+		this.last_valid_touch_point = point;
+		
 	}
 
 	add_to_operation_pokers(poker:Poker){
@@ -179,13 +204,15 @@ class DiscardBlock extends eui.Component implements  eui.UIComponent {
 
 
 
-	toggle_operation_pokers(){
+	toggle_operation_pokers(evt:egret.TouchEvent){
+
 		for (let i = 0;i<this.operation_pokers.length;i++){
 			let poker:Poker =this.operation_pokers[i];
 			poker.toggle();
 			poker.shallower();
 
 		}
+		this.last_valid_touch_point = null
 		this.operation_pokers = []
 	}
 
@@ -207,6 +234,21 @@ class DiscardBlock extends eui.Component implements  eui.UIComponent {
 		}
 
 		this.adjust_all_cards()
+	}
+
+	reset_all_pokers(){
+		for (let i=0;i<this.pokers.numChildren;i++){
+			let poker = <Poker>this.pokers.getChildAt(i);
+			poker.reset();
+		}
+	}
+
+	test(evt:egret.TouchEvent){
+		console.log("outside",evt.localX,evt.localY,
+		this.globalToLocal(evt.stageX,evt.stageY),
+		"\n----\n"
+		
+		);
 	}
 	
 }
